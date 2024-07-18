@@ -1,0 +1,98 @@
+import random
+
+# Definição do baralho
+NAIPES = ['ouros', 'espadas', 'copas', 'paus']
+VALORES = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3']
+TRUNFOS = ['4 de paus', '7 de copas', 'A de espadas', '7 de ouros']
+
+# Função para criar um baralho completo
+def criar_baralho():
+    baralho = []
+    for naipe in NAIPES:
+        for valor in VALORES:
+            baralho.append(f'{valor} de {naipe}')
+    return baralho
+
+# Função para embaralhar o baralho
+def embaralhar(baralho):
+    random.shuffle(baralho)
+
+# Função para distribuir cartas
+def distribuir_cartas(baralho):
+    jogador = []
+    maquina = []
+    for _ in range(3):
+        jogador.append(baralho.pop(0))  # Remove do início e adiciona à mão do jogador
+        maquina.append(baralho.pop(0))  # Remove do início e adiciona à mão da máquina
+    return jogador, maquina
+
+# Função para determinar o valor de uma carta
+def valor_carta(carta):
+    valor = carta.split()[0]
+    return VALORES.index(valor)
+
+# Função para determinar o vencedor da rodada
+def determinar_vencedor(jogador, maquina):
+    valor_jogador = valor_carta(jogador)
+    valor_maquina = valor_carta(maquina)
+    
+    if valor_jogador > valor_maquina:
+        return 'jogador'
+    elif valor_maquina > valor_jogador:
+        return 'maquina'
+    else:
+        return 'empate'
+
+# Função principal do jogo
+def jogo_truco():
+    baralho = criar_baralho()
+    embaralhar(baralho)
+    
+    pontos_jogador = 0
+    pontos_maquina = 0
+    
+    for rodada in range(3):
+        print(f'\nRodada {rodada + 1}:')
+        
+        jogador, maquina = distribuir_cartas(baralho)
+        
+        print(f'Cartas do jogador: {", ".join(jogador)}')
+        print(f'Cartas da máquina: {", ".join(maquina)}')
+        
+        escolha_jogador = input('Escolha uma carta para jogar (1, 2 ou 3): ')
+        escolha_jogador = int(escolha_jogador) - 1
+        
+        while escolha_jogador < 0 or escolha_jogador > 2:
+            escolha_jogador = input('Escolha inválida. Escolha uma carta para jogar (1, 2 ou 3): ')
+            escolha_jogador = int(escolha_jogador) - 1
+        
+        carta_jogador = jogador[escolha_jogador]
+        carta_maquina = maquina[random.randint(0, 2)]
+        
+        print(f'Você jogou: {carta_jogador}')
+        print(f'A máquina jogou: {carta_maquina}')
+        
+        resultado = determinar_vencedor(carta_jogador, carta_maquina)
+        
+        if resultado == 'jogador':
+            print('Você venceu a rodada!')
+            pontos_jogador += 1
+        elif resultado == 'maquina':
+            print('A máquina venceu a rodada!')
+            pontos_maquina += 1
+        else:
+            print('Empate na rodada!')
+    
+    print('\n*** Resultado Final ***')
+    print(f'Pontuação do jogador: {pontos_jogador}')
+    print(f'Pontuação da máquina: {pontos_maquina}')
+    
+    if pontos_jogador > pontos_maquina:
+        print('Você ganhou o jogo!')
+    elif pontos_maquina > pontos_jogador:
+        print('A máquina ganhou o jogo!')
+    else:
+        print('O jogo terminou em empate!')
+
+# Execução do jogo
+jogo_truco()
